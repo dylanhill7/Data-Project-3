@@ -11,10 +11,10 @@ load_dotenv()
 
 # configuration
 NYT_API_KEY = os.getenv("NYT_API_KEY")
-# S3_BUCKET = os.getenv("S3_BUCKET")
+S3_BUCKET = os.getenv("S3_BUCKET")
 BASE_URL = "https://api.nytimes.com/svc/archive/v1"
 MANIFEST_PATH = "manifest/nyt_manifest.json"
-# s3 = boto3.client("s3")
+s3 = boto3.client("s3")
 
 
 # -------------------------- task 1 - rate limiting policy --------------------------
@@ -88,7 +88,7 @@ def validate_payload(payload: dict) -> dict:
 
 
 
-'''
+
 # ------------------------- task 4 - upload to S3 -------------------------
 # upload validated payload to s3 bucket in structured
 
@@ -206,4 +206,3 @@ def nyt_archive_flow(start_year=2022, end_year=2024, rate_limit_seconds=12):
 if __name__ == "__main__":
     nyt_archive_flow(start_year=2022, end_year=2024)
 
-'''
