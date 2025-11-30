@@ -1,0 +1,12 @@
+requests
+confluent-kafka
+python-dotenv
+duckdb
+redis
+pandas
+textblob
+matplotlib
+seaborn
+loguru
+scikit-learn
+boto3

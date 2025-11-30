@@ -1,0 +1,263 @@
+swagger: "2.0"
+basePath: /svc/news/v3
+host: api.nytimes.com
+schemes:
+  - https
+info:
+  version: 3.0.0
+  title: Times Newswire API
+  description: |
+    With the Times Newswire API, you can get links and metadata for Times' articles as soon as they are published on NYTimes.com. The Times Newswire API provides an up-to-the-minute stream of published articles.  You can filter results by source (all, nyt, inyt) and section (arts, business, ...).
+    ```
+    /content/{source}/{section}.json
+    ```
+    ## Example Calls
+    ```
+    https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=yourkey
+    https://api.nytimes.com/svc/news/v3/content/nyt/business.json?api-key=yourkey
+    https://api.nytimes.com/svc/news/v3/content/nyt/world.json?api-key=yourkey
+    ```
+
+    The section-list endpoint returns a list of sections.
+
+    ```
+    /content/section-list.json
+    ```
+
+    ## Example Call
+    ```
+    https://api.nytimes.com/svc/news/v3/content/section-list.json?api-key=yourkey
+    ```
+
+produces:
+  - application/json
+security:
+  - apikey: []
+paths:
+  "/content/{source}/{section}.json":
+    get:
+      parameters:
+        - name: source
+          in: path
+          description: |
+            Limits the set of items by originating source.
+
+            all = items from both The New York Times and The International New York Times
+            nyt = New York Times items only
+            inyt = International New York Times items only (FKA The International Herald Tribune)
+          type: string
+          enum:
+            - all
+            - nyt
+            - inyt
+          required: true
+          x-consoleDefault: all
+        - name: section
+          in: path
+          description: |
+            Limits the set of items by a section.
+            all | A section name
+
+             To get all sections, specify all. To get a particular section, use the section name returned by this request:
+             http://api.nytimes.com/svc/news/v3/content/section-list.json
+          default: all
+          required: true
+          type: string
+          x-consoleDefault: all
+        - name: limit
+          in: query
+          description: "Limits the number of results.  Set to increment of 20 up to 500."
+          default: 20
+          minimum: 20
+          maximum: 500
+          multipleOf: 20
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Sets the starting point of the result set.
+          required: false
+          default: 0
+          minimum: 0
+          maximum: 500
+          multipleOf: 20
+          type: integer
+      responses:
+        "200":
+          description: An array of Articles
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              copyright:
+                type: string
+              num_results:
+                type: integer
+              results:
+                type: array
+                items:
+                  $ref: "#/definitions/Article"
+        "400":
+          description: Bad request.  Check your query parameters.
+        "401":
+          description: Unauthorized request.  Make sure api-key is set.
+        "429":
+          description: Too many requests.  You reached your per minute or per day rate limit.
+  "/content.json":
+    get:
+      parameters:
+        - name: url
+          in: query
+          type: string
+          description: "The complete URL of a specific news item, URL-encoded or backslash-escaped"
+          default: https%3A%2F%2Fwww.nytimes.com%2F2018%2F09%2F19%2Fworld%2Fasia%2Fnorth-south-korea-nuclear-weapons.html
+          required: true
+      responses:
+        "200":
+          description: An array of Articles
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              copyright:
+                type: string
+              num_results:
+                type: integer
+              results:
+                type: array
+                items:
+                  $ref: "#/definitions/Article"
+        "400":
+          description: Bad request.  Check your query parameters.
+        "401":
+          description: Unauthorized request.  Make sure api-key is set.
+        "429":
+          description: Too many requests.  You reached your per minute or per day rate limit.
+  "/content/section-list.json":
+    get:
+      parameters: []
+      responses:
+        "200":
+          description: An array of Sections
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              copyright:
+                type: string
+              num_results:
+                type: integer
+              results:
+                type: array
+                items:
+                  $ref: "#/definitions/Section"
+        "400":
+          description: Bad request.  Check your query parameters.
+        "401":
+          description: Unauthorized request.  Make sure api-key is set.
+        "429":
+          description: Too many requests.  You reached your per minute or per day rate limit.
+definitions:
+  Section:
+    type: object
+    properties:
+      section:
+        type: string
+      display_name:
+        type: string
+  Article:
+    type: object
+    properties:
+      section:
+        type: string
+      subsection:
+        type: string
+      title:
+        description: Article headline.
+        type: string
+      abstract:
+        description: Article summary.
+        type: string
+      uri:
+        description: Uniquely identifies an article.
+        type: string
+      url:
+        description: Article URL.
+        type: string
+      short_url:
+        type: string
+      byline:
+        type: string
+      thumbnail_standard:
+        type: string
+      item_type:
+        type: string
+      source:
+        description: Publication ("International New York Times" or "New York Times").
+        type: string
+      updated_date:
+        type: string
+      created_date:
+        type: string
+      published_date:
+        type: string
+      material_type_facet:
+        type: string
+      kicker:
+        type: string
+      headline:
+        type: string
+      des_facet:
+        type: array
+        items:
+          type: string
+      org_facet:
+        type: string
+      per_facet:
+        type: array
+        items:
+          type: string
+      geo_facet:
+        type: array
+        items:
+          type: string
+      blog_name:
+        type: string
+      related_urls:
+        type: array
+        items:
+          type: object
+          properties:
+            suggested_link_text:
+              type: string
+            url:
+              type: string
+      multimedia:
+        type: array
+        items:
+          type: object
+          properties:
+            url:
+              type: string
+            format:
+              type: string
+            height:
+              type: integer
+            width:
+              type: integer
+            type:
+              type: string
+            subtype:
+              type: string
+            caption:
+              type: string
+            copyright:
+              type: string
+securityDefinitions:
+  apikey:
+    type: apiKey
+    name: api-key
+    in: query
