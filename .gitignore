@@ -1,2 +1,5 @@
 .env
 *.duckdb
+*.log
+*dp3env
+*plots
